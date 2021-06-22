@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>METANIT.COM</title>
+</head>
+<body>
+<div id="app"></div>
+
+<script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+
+  function UserForm() {
+    const [name, setName] = React.useState("Tom");
+    const nameRef = React.useRef(name);
+
+    React.useEffect(() => {
+      nameRef.current = name;
+    }, [name]);
+
+    React.useEffect(() => {
+          // извлекаем данные из localStorage
+          const userName = localStorage.getItem("userName");
+          // если в localStorage есть такой объект
+          if (userName !== null) {
+            setName(userName);
+            console.log("Got!");
+          }
+
+          // сохраняем данные в localStorage
+          return () => {
+            console.log(nameRef.current);
+            localStorage.setItem("userName", nameRef.current);
+            console.log("Saved!");
+          }
+        },
+        []); // эффект срабатывает только один раз - при самом первом рендеринге
+
+    const changeName = (event) => setName(event.target.value);
+    const unmount = () => ReactDOM.unmountComponentAtNode(document.getElementById("app"));
+
+    return (
+        <div>
+          <h3>Имя: {name}</h3>
+
+          <div>
+            <p>Имя: <input type="text" value={name} onChange={changeName}/></p>
+            <button onClick={unmount}>Unmount</button>
+          </div>
+        </div>
+    );
+  }
+
+  ReactDOM.render(
+      <UserForm/>,
+      document.getElementById("app")
+  )
+</script>
+</body>
+</html>
